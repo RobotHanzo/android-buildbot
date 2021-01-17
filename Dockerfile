@@ -1,10 +1,8 @@
 FROM ubuntu:20.04
-# Use Ubuntu Bionic/Focal LTS image as base
-
 ENV \
 	DEBIAN_FRONTEND=noninteractive \
 	LANG=C.UTF-8 \
-	JAVA_OPTS=" -Xmx4G " \
+	_JAVA_OPTIONS="-Xmx4G" \
 	JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
 	PATH=~/bin:/usr/local/bin:/home/builder/bin:$PATH \
 	USE_CCACHE=1 \
