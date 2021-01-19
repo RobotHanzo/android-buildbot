@@ -5,10 +5,6 @@ ENV \
 	_JAVA_OPTIONS="-Xmx4G" \
 	JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
 	PATH=~/bin:/usr/local/bin:/home/builder/bin:$PATH \
-	USE_CCACHE=1 \
-	CCACHE_COMPRESS=1 \
-	CCACHE_COMPRESSLEVEL=8 \
-	CCACHE_DIR=/srv/ccache
 
 # Expand apt repository beyond itself
 RUN sed 's/main$/main universe/' /etc/apt/sources.list 1>/dev/null
@@ -97,15 +93,7 @@ RUN set -xe \
 	&& wget -q https://ftp.gnu.org/gnu/make/make-4.3.tar.gz \
 	&& tar xzf make-4.3.tar.gz \
 	&& cd make-*/ \
-	&& ./configure && bash ./build.sh 1>/dev/null && install ./make /usr/local/bin/make \
-	&& cd .. \
-	&& git clone https://github.com/ccache/ccache.git \
-	&& cd ccache && git checkout -q v4.1 \
-	&& mkdir build && cd build \
-	&& cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr .. \
-	&& make -j8 && make install \
-	&& cd ../../.. \
-	&& rm -rf extra
+	&& ./configure && bash ./build.sh 1>/dev/null && install ./make /usr/local/bin/make
 
 RUN if [ -e /lib/x86_64-linux-gnu/libncurses.so.6 ] && [ ! -e /usr/lib/x86_64-linux-gnu/libncurses.so.5 ]; then \
 			ln -s /lib/x86_64-linux-gnu/libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5; \
@@ -123,10 +111,6 @@ RUN set -xe \
 	&& chmod 644 /etc/udev/rules.d/51-android.rules \
 	&& chown root /etc/udev/rules.d/51-android.rules
 
-RUN CCACHE_DIR=/srv/ccache ccache -M 50G \
-	&& chown builder:builder /srv/ccache
-
 USER builder
 
 VOLUME [/home/builder]
-VOLUME [/srv/ccache]
