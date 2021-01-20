@@ -4,7 +4,7 @@ ENV \
 	LANG=C.UTF-8 \
 	_JAVA_OPTIONS="-Xmx4G" \
 	JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
-	PATH=~/bin:/usr/local/bin:/home/builder/bin:$PATH \
+	PATH=~/bin:/usr/local/bin:/home/builder/bin:$PATH
 
 # Expand apt repository beyond itself
 RUN sed 's/main$/main universe/' /etc/apt/sources.list 1>/dev/null
