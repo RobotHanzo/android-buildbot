@@ -5,7 +5,8 @@ ENV \
 	_JAVA_OPTIONS="-Xmx4G" \
 	JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
 	PATH=~/bin:/usr/local/bin:/home/builder/bin:$PATH \
-	USE_CCACHE=1 \
+	USE_CCACHE=true \
+	CCACHE_EXEC=/usr/local/bin/ccache \
 	CCACHE_COMPRESS=1 \
 	CCACHE_COMPRESSLEVEL=8 \
 	CCACHE_DIR=/srv/ccache
@@ -106,6 +107,13 @@ RUN set -xe \
 	&& make -j8 && make install \
 	&& cd ../../.. \
 	&& rm -rf extra
+	
+RUN cd /tmp \
+	&& git clone https://github.com/ccache/ccache
+	&& cd ccache
+	&& cmake -DCMAKE_BUILD_TYPE=Release -DZSTD_FROM_INTERNET=ON
+	&& make
+	&& make install
 
 RUN if [ -e /lib/x86_64-linux-gnu/libncurses.so.6 ] && [ ! -e /usr/lib/x86_64-linux-gnu/libncurses.so.5 ]; then \
 			ln -s /lib/x86_64-linux-gnu/libncurses.so.6 /usr/lib/x86_64-linux-gnu/libncurses.so.5; \
@@ -123,7 +131,7 @@ RUN set -xe \
 	&& chmod 644 /etc/udev/rules.d/51-android.rules \
 	&& chown root /etc/udev/rules.d/51-android.rules
 
-RUN CCACHE_DIR=/srv/ccache ccache -M 50G \
+RUN CCACHE_DIR=/srv/ccache ccache -M 100G \
 	&& chown builder:builder /srv/ccache
 
 USER builder
