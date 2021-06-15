@@ -112,5 +112,3 @@ RUN set -xe \
 	&& chown root /etc/udev/rules.d/51-android.rules
 
 USER builder
-
-VOLUME [/home/builder]
